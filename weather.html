@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Forecast</title>
+</head>
+<body>
+    <h1>Weather Forecast</h1>
+    <form id="locationForm">
+        <label for="location">Enter Location:</label>
+        <input type="text" id="location" placeholder="City, Country" required>
+        <button type="submit">Get Weather</button>
+    </form>
+
+    <div id="weatherContainer"></div>
+
+    <script>
+        const form = document.getElementById('locationForm');
+        const weatherContainer = document.getElementById('weatherContainer');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const locationInput = document.getElementById('location');
+            const location = locationInput.value;
+
+            // Replace 'YOUR_API_KEY' with your OpenWeatherMap API key
+            const apiKey = 'YOUR_API_KEY';
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherData = {
+                        name: data.name,
+                        temperature: Math.round(data.main.temp - 273.15),
+                        description: data.weather[0].description,
+                    };
+
+                    const weatherHtml = `
+                        <h2>${weatherData.name}</h2>
+                        <p>Temperature: ${weatherData.temperature}°C</p>
+                        <p>Description: ${weatherData.description}</p>
+                    `;
+
+                    weatherContainer.innerHTML = weatherHtml;
+                })
+                .catch(error => {
+                    console.log(error);
+                    weatherContainer.innerHTML = 'Error fetching weather data.';
+                });
+
+            locationInput.value = '';
+        });
+    </script>
+</body>
+</html>
